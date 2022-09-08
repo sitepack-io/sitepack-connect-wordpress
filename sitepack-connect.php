@@ -24,9 +24,6 @@ define('SITEPACK_PLUGIN_BASENAME', plugin_basename(__FILE__));
 define('SITEPACK_CONNECT_VERSION', '1.0.0');
 define('SITEPACK_CONNECT_PLUGIN_DIR', plugin_dir_path(__FILE__));
 
-//register_activation_hook(__FILE__,['Akismet', 'plugin_activation'));
-//register_deactivation_hook(__FILE__,['Akismet', 'plugin_deactivation'));
-
 require_once(SITEPACK_CONNECT_PLUGIN_DIR . 'class.sitepack-connect.php');
 require_once(SITEPACK_CONNECT_PLUGIN_DIR . 'class.sitepack-connect-rest-api.php');
 
