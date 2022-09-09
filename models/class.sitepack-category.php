@@ -8,6 +8,7 @@ class SitePackCategory implements \JsonSerializable
     private $categorySub;
     private $categorySubSub;
     private $url;
+    private ?int $parentId;
 
     public function __construct(
         string $source,
@@ -15,7 +16,8 @@ class SitePackCategory implements \JsonSerializable
         string $categoryMain,
         string $categorySub,
         string $categorySubSub,
-        string $url
+        string $url,
+        ?int $parentId = null
     ) {
         $this->source = $source;
         $this->id = $id;
@@ -23,6 +25,7 @@ class SitePackCategory implements \JsonSerializable
         $this->categorySub = $categorySub;
         $this->categorySubSub = $categorySubSub;
         $this->url = $url;
+        $this->parentId = $parentId;
     }
 
     public static function fromWooCommerce(array $categories, WP_Term $data)
@@ -44,7 +47,8 @@ class SitePackCategory implements \JsonSerializable
                 $parentsParent->name,
                 $parent->name,
                 $data->name,
-                get_term_link($data)
+                get_term_link($data),
+                $data->parent
             );
         }
 
@@ -55,7 +59,8 @@ class SitePackCategory implements \JsonSerializable
                 $parent->name,
                 $data->name,
                 '',
-                get_term_link($data)
+                get_term_link($data),
+                $data->parent
             );
         }
 
@@ -65,11 +70,12 @@ class SitePackCategory implements \JsonSerializable
             $data->name,
             '',
             '',
-            get_term_link($data)
+            get_term_link($data),
+            $data->parent
         );
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return \get_object_vars($this);
     }

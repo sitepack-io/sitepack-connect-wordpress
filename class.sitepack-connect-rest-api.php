@@ -7,7 +7,7 @@ class SitePackConnectRestApi
     const MESSAGE_UNAUTHORIZED = 'UNAUTHORIZED';
 
     /** @var SitePackWooCommerceService */
-    private $wooCommerceService = null;
+    private $eCommerceService = null;
 
     public function init()
     {
@@ -15,7 +15,7 @@ class SitePackConnectRestApi
             return;
         }
 
-        $this->wooCommerceService = new SitePackWooCommerceService();
+        $this->eCommerceService = new SitePackWooCommerceService();
 
         register_rest_route('sitepack-connect/v1', '/categories', [
             'methods' => 'GET',
@@ -25,8 +25,8 @@ class SitePackConnectRestApi
             'methods' => 'POST',
             'callback' => [$this, 'renderCategoriesCreate'],
         ]);
-        register_rest_route('sitepack-connect/v1', '/categories/(?P<id>\d+)', [
-            'methods' => 'GET',
+        register_rest_route('sitepack-connect/v1', '/categories/update/(?P<id>\d+)', [
+            'methods' => 'POST',
             'callback' => [$this, 'renderCategoryUpdate'],
         ]);
         register_rest_route('sitepack-connect/v1', '/orders', [
@@ -40,6 +40,13 @@ class SitePackConnectRestApi
         register_rest_route('sitepack-connect/v1', '/products/(?P<id>\d+)/update', [
             'methods' => 'POST',
             'callback' => [$this, 'renderUpdateProduct'],
+            'args' => [
+                'id' => [
+                    'validate_callback' => function ($param) {
+                        return is_numeric($param);
+                    }
+                ],
+            ],
         ]);
         register_rest_route('sitepack-connect/v1', '/products/(?P<id>\d+)/archive', [
             'methods' => 'POST',
@@ -58,7 +65,7 @@ class SitePackConnectRestApi
 
             return [
                 'status' => 'success',
-                'categories' => $this->wooCommerceService->getCategories(),
+                'categories' => $this->eCommerceService->getCategories(),
             ];
         } catch (\Exception $exception) {
             return $this->renderError($exception->getMessage());
@@ -69,15 +76,57 @@ class SitePackConnectRestApi
     {
         try {
             $this->authenticateRequest($request);
+            $this->validateRequiredFields($request, [
+                'import_source',
+                'name',
+                'slug',
+                'parentId',
+            ]);
 
-//            $data['uuid'],
-//            $data['name'],
-//            $data['slug'],
-//            $data['parentUuid'],
+            $category = $this->eCommerceService->createCategory(
+                $request['import_source'],
+                $request['name'],
+                $request['slug'],
+                $request['parentId'],
+            );
 
             return [
                 'status' => 'success',
-                'category' => [],// return data
+                'category' => [
+                    'id' => $category->term_id,
+                    'name' => $category->name,
+                    'url' => get_term_link($category),
+                    'parent' => $category->parent,
+                ],
+            ];
+        } catch (\Exception $exception) {
+            return $this->renderError($exception->getMessage());
+        }
+    }
+
+    public function renderCategoryUpdate(WP_REST_Request $request)
+    {
+        try {
+            $this->authenticateRequest($request);
+            $this->validateRequiredFields($request, [
+                'name',
+                'parentId',
+            ]);
+
+            $category = $this->eCommerceService->findCategory((int)$request['id']);
+
+            if (!$category instanceof WP_Term) {
+                throw new Exception('Invalid category!');
+            }
+
+            $this->eCommerceService->updateCategory(
+                $category,
+                $request['name'],
+                $request['parentId'],
+            );
+
+            return [
+                'status' => 'success',
             ];
         } catch (\Exception $exception) {
             return $this->renderError($exception->getMessage());
@@ -91,25 +140,7 @@ class SitePackConnectRestApi
 
             return [
                 'status' => 'success',
-                'orders' => $this->wooCommerceService->getOrders(),
-            ];
-        } catch (\Exception $exception) {
-            return $this->renderError($exception->getMessage());
-        }
-    }
-
-    public function renderCategoryUpdate(WP_REST_Request $request)
-    {
-        try {
-            $this->authenticateRequest($request);
-
-            $id = $request['id'];
-            if (empty($id)) {
-                return $this->renderError('Empty category id!');
-            }
-
-            return [
-                'status' => 'success',
+                'orders' => $this->eCommerceService->getOrders(),
             ];
         } catch (\Exception $exception) {
             return $this->renderError($exception->getMessage());
@@ -120,11 +151,21 @@ class SitePackConnectRestApi
     {
         try {
             $this->authenticateRequest($request);
+            $this->validateRequiredFields($request, [
+                'name',
+                'ean',
+                'site',
+                'importSource',
+                'salesPrice',
+                'shortDescription',
+                'longDescription',
+                'categoryId',
+            ]);
 
-            $product = $this->wooCommerceService->mapProductFromData(
+            $product = $this->eCommerceService->mapProductFromData(
                 $request
             );
-            $productId = $this->wooCommerceService->saveProduct($product);
+            $productId = $this->eCommerceService->saveProduct($request, $product);
 
             return [
                 'status' => 'success',
@@ -139,12 +180,23 @@ class SitePackConnectRestApi
     {
         try {
             $this->authenticateRequest($request);
+            $this->validateRequiredFields($request, [
+                'name',
+                'ean',
+                'site',
+                'importSource',
+                'salesPrice',
+                'shortDescription',
+                'longDescription',
+                'categoryId',
+                'id',
+            ]);
 
-            $product = $this->wooCommerceService->mapProductFromData(
+            $product = $this->eCommerceService->mapProductFromData(
                 $request
             );
 
-            $productId = $this->wooCommerceService->saveProduct($product);
+            $productId = $this->eCommerceService->saveProduct($request, $product);
 
             return [
                 'status' => 'success',
@@ -160,7 +212,7 @@ class SitePackConnectRestApi
         try {
             $this->authenticateRequest($request);
 
-            $product = $this->wooCommerceService->findProduct($request['productId']);
+            $product = $this->eCommerceService->findProduct($request['productId']);
 
             return [
                 'status' => 'success',
@@ -189,7 +241,19 @@ class SitePackConnectRestApi
 
     private function authenticateRequest(WP_REST_Request $request)
     {
+//        $request->get_header('x-api-key');
+//        $request->get_header('x-api-secret');
+
 //        throw new Exception(self::MESSAGE_UNAUTHORIZED);
+    }
+
+    private function validateRequiredFields(WP_REST_Request $request, array $fields): void
+    {
+        foreach ($fields as $field) {
+            if (!isset($request[$field])) {
+                throw new Exception('Missing data field: ' . esc_attr($field));
+            }
+        }
     }
 
 }
