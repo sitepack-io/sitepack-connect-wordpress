@@ -2,6 +2,10 @@
 
 require_once(SITEPACK_CONNECT_PLUGIN_DIR . 'models/class.sitepack-category.php');
 
+if (!function_exists('wp_generate_attachment_metadata')) {
+    require ABSPATH . 'wp-admin/includes/image.php';
+}
+
 class SitePackWooCommerceService
 {
 
@@ -63,6 +67,23 @@ class SitePackWooCommerceService
 
         $product->set_category_ids($this->getCorrespondingCategoryIds((int )$data['categoryId']));
 
+        $product->set_manage_stock(true);
+        $product->set_stock_quantity(0);
+        $product->set_stock_status('outofstock');
+        if ($data['hasStock'] === true) {
+            $product->set_stock_status('instock');
+
+            if ($data['inStock'] === 0 && $data['stockSupplier'] >= 1) {
+                $product->set_stock_status('onbackorder');
+            }
+
+            $product->set_stock_quantity($data['inStock'] + $data['stockSupplier']);
+
+            if ($product->get_stock_quantity() < 1) {
+                $product->set_stock_quantity(1);
+            }
+        }
+
         $metaData = [];
         if (!empty($data['metadata'])) {
             $json = \json_decode($data['metadata'], true);
@@ -123,7 +144,7 @@ class SitePackWooCommerceService
                 'is_taxonomy' => 0,
             ];
         }
-        
+
         update_post_meta($productId, '_product_attributes', $data);
 
         return $productId;
@@ -132,6 +153,53 @@ class SitePackWooCommerceService
     public function findProduct(mixed $productId): WC_Product
     {
         return new WC_Product_Simple($productId);
+    }
+
+    public function saveProductImage(WC_Product $product, WP_REST_Request $request): int
+    {
+        $uploadDir = wp_upload_dir();
+        $uploadPath = str_replace(
+                '/',
+                DIRECTORY_SEPARATOR,
+                $uploadDir['path']
+            ) . DIRECTORY_SEPARATOR;
+
+        $decoded = base64_decode(
+            str_replace([
+                'data:image/jpeg;base64,',
+                ' '
+            ],
+                [
+                    '',
+                    '+',
+                ],
+                $request['imageContent']
+            )
+        );
+        $filename = sprintf(
+            '%s_%d.jpg',
+            self::formatName($product->get_name()),
+            rand(1, 50000)
+        );
+        $file_type = 'image/jpeg';
+        file_put_contents($uploadPath . $filename, $decoded);
+
+        $attachment = [
+            'post_mime_type' => $file_type,
+            'post_title' => sanitize_text_field($product->get_name()),
+            'post_excerpt' => sanitize_text_field($product->get_name()),
+            'post_content' => sanitize_text_field($product->get_name()),
+            'post_status' => 'inherit',
+            'guid' => $uploadDir['url'] . '/' . basename($filename)
+        ];
+
+        $mediaId = wp_insert_attachment($attachment, $uploadDir['path'] . DIRECTORY_SEPARATOR . $filename);
+        $attach_data = wp_generate_attachment_metadata($mediaId, $uploadDir['path'] . DIRECTORY_SEPARATOR . $filename);
+        wp_update_attachment_metadata($mediaId, $attach_data);
+
+        update_post_meta($mediaId, '_wp_attachment_image_alt', sanitize_text_field($product->get_name()));
+
+        return $mediaId;
     }
 
     /**

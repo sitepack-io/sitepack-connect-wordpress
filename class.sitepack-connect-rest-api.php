@@ -48,13 +48,27 @@ class SitePackConnectRestApi
                 ],
             ],
         ]);
-        register_rest_route('sitepack-connect/v1', '/products/(?P<id>\d+)/archive', [
-            'methods' => 'POST',
-            'callback' => [$this, 'renderArchiveProduct'],
-        ]);
         register_rest_route('sitepack-connect/v1', '/products/(?P<id>\d+)/image', [
             'methods' => 'POST',
             'callback' => [$this, 'renderImageProduct'],
+            'args' => [
+                'id' => [
+                    'validate_callback' => function ($param) {
+                        return is_numeric($param);
+                    }
+                ],
+            ],
+        ]);
+        register_rest_route('sitepack-connect/v1', '/products/(?P<id>\d+)/archive', [
+            'methods' => 'POST',
+            'callback' => [$this, 'renderArchiveProduct'],
+            'args' => [
+                'id' => [
+                    'validate_callback' => function ($param) {
+                        return is_numeric($param);
+                    }
+                ],
+            ],
         ]);
     }
 
@@ -160,6 +174,9 @@ class SitePackConnectRestApi
                 'shortDescription',
                 'longDescription',
                 'categoryId',
+                'inStock',
+                'stockSupplier',
+                'hasStock',
             ]);
 
             $product = $this->eCommerceService->mapProductFromData(
@@ -190,6 +207,9 @@ class SitePackConnectRestApi
                 'longDescription',
                 'categoryId',
                 'id',
+                'inStock',
+                'stockSupplier',
+                'hasStock',
             ]);
 
             $product = $this->eCommerceService->mapProductFromData(
@@ -211,12 +231,63 @@ class SitePackConnectRestApi
     {
         try {
             $this->authenticateRequest($request);
+            $this->validateRequiredFields($request, [
+                'id',
+                'imageContent',
+                'alt',
+            ]);
 
-            $product = $this->eCommerceService->findProduct($request['productId']);
+            $product = $this->eCommerceService->findProduct($request['id']);
+
+            $mediaId = $this->eCommerceService->saveProductImage(
+                $product,
+                $request
+            );
+
+            if (is_array($request['imageGallery'])) {
+                $images = array_merge($request['imageGallery'], [$mediaId]);
+            }
+            else{
+                $images = [$mediaId];
+            }
+
+            $mainImage = current($images);
+
+            foreach ($images as $key => $id) {
+                if ((int)$mainImage === (int)$id || (int)$id === 0 || empty($id)) {
+                    unset($images[$key]);
+                }
+            }
+
+            set_post_thumbnail($product->get_id(), $mainImage);
+            $product->set_gallery_image_ids($images);
+            $product->set_image_id($mainImage);
+
+            if (count($images) >= 1) {
+                update_post_meta(
+                    $product->get_id(),
+                    '_product_image_gallery',
+                    implode(',', $images)
+                );
+            } else {
+                update_post_meta(
+                    $product->get_id(),
+                    '_product_image_gallery',
+                    null
+                );
+            }
+
+            $product->save();
 
             return [
                 'status' => 'success',
-                'image_id' => 1,
+                'product' => [
+                    'main' => $product->get_image(),
+                    'gallery' => $product->get_gallery_image_ids(),
+                    'thumb' => get_post_thumbnail_id($product),
+                    'debug' => $images,
+                ],
+//                'image_id' => $mediaId,
             ];
         } catch (\Exception $exception) {
             return $this->renderError($exception->getMessage());
