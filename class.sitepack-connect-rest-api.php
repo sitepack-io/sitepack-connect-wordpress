@@ -1,6 +1,7 @@
 <?php
 
 require_once(SITEPACK_CONNECT_PLUGIN_DIR . 'services/class.sitepack-woocommerce.php');
+require_once(SITEPACK_CONNECT_PLUGIN_DIR . 'class.sitepack-connect-admin.php');
 
 class SitePackConnectRestApi
 {
@@ -246,8 +247,7 @@ class SitePackConnectRestApi
 
             if (is_array($request['imageGallery'])) {
                 $images = array_merge($request['imageGallery'], [$mediaId]);
-            }
-            else{
+            } else {
                 $images = [$mediaId];
             }
 
@@ -287,7 +287,7 @@ class SitePackConnectRestApi
                     'thumb' => get_post_thumbnail_id($product),
                     'debug' => $images,
                 ],
-//                'image_id' => $mediaId,
+                'image_id' => $mediaId,
             ];
         } catch (\Exception $exception) {
             return $this->renderError($exception->getMessage());
@@ -312,10 +312,18 @@ class SitePackConnectRestApi
 
     private function authenticateRequest(WP_REST_Request $request)
     {
-//        $request->get_header('x-api-key');
-//        $request->get_header('x-api-secret');
+        $request->get_header('x-api-key');
+        $request->get_header('x-api-secret');
 
-//        throw new Exception(self::MESSAGE_UNAUTHORIZED);
+        if (empty($request->get_header('x-api-key'))
+            || $request->get_header('x-api-key') !== get_option(SitePackConnectAdmin::SITEPACK_API_KEY)) {
+            throw new Exception(self::MESSAGE_UNAUTHORIZED);
+        }
+
+        if (empty($request->get_header('x-api-secret'))
+            || $request->get_header('x-api-secret') !== get_option(SitePackConnectAdmin::SITEPACK_API_SECRET)) {
+            throw new Exception(self::MESSAGE_UNAUTHORIZED);
+        }
     }
 
     private function validateRequiredFields(WP_REST_Request $request, array $fields): void

@@ -37,6 +37,7 @@ class SitePackWooCommerceService
 
     public function getOrders(): array
     {
+        // TODO, future implementation
     }
 
     public function mapProductFromData(WP_REST_Request $data): WC_Product
@@ -150,7 +151,7 @@ class SitePackWooCommerceService
         return $productId;
     }
 
-    public function findProduct(mixed $productId): WC_Product
+    public function findProduct($productId): WC_Product
     {
         return new WC_Product_Simple($productId);
     }
@@ -176,8 +177,10 @@ class SitePackWooCommerceService
                 $request['imageContent']
             )
         );
+
         $filename = sprintf(
-            '%s_%d.jpg',
+            '%d_%s_%d.jpg',
+            $product->get_id(),
             self::formatName($product->get_name()),
             rand(1, 50000)
         );
@@ -269,7 +272,30 @@ class SitePackWooCommerceService
 
     private static function formatName(string $name): string
     {
-        return \strtolower(\str_replace(' ', '-', $name));
+        $name = strtolower($name);
+        $name = preg_replace("/[^A-Za-z0-9 ]/", '', $name);
+
+        return \str_replace(
+            [
+                ' ',
+                '(',
+                ')',
+                "\/",
+                '!',
+                '@',
+                '`',
+                '~',
+                '@',
+                '#',
+                '$',
+                '%',
+                '^',
+                '&',
+                '*',
+            ],
+            '-',
+            $name
+        );
     }
 
 
