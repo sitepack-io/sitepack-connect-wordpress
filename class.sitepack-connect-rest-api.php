@@ -305,7 +305,7 @@ class SitePackConnectRestApi
 
         return new WP_Error(
             500,
-            $message,
+            esc_attr($message),
             ['status' => 'failed']
         );
     }
