@@ -27,7 +27,7 @@ Release date: 2023-03-30
 
 #### Enhancements
 
-* PHP Shorthand tag replated with default opening tag
+* PHP Shorthand tag replaced with default opening tag
 
 = 1.0.1 =
 
