@@ -3,7 +3,7 @@ Contributors: sitepack
 Tags: connect, woocommerce, integration, api, sitepack
 Requires at least: 5.0
 Tested up to: 6.1.1
-Stable tag: 1.0.2
+Stable tag: 1.1.0
 License: GPLv2 or later
 
 Connect your eCommerce store with external APIs, using SitePack Connect. Import products with stock information and export orders to your favorite software.
@@ -20,6 +20,18 @@ You can also export orders and integrate with third party software.
 If you want to contribute, please take a look at our [Github Repository](https://github.com/sitepack-io/sitepack-connect-wordpress).
 
 == Changelog ==
+
+= 1.1.0 =
+
+Release date: 2023-04-03
+
+#### Enhancements
+
+* You can use the spGetProductStockInformation(int $productId) method to get the live stock information of a product and their related stock locations
+
+#### Bugfixes
+
+* Stock implementation call bugfix in REST API
 
 = 1.0.2 =
 
