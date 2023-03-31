@@ -48,3 +48,17 @@ if (!function_exists('spWooIsActive')) {
         return false;
     }
 }
+
+if (!function_exists('spGetProductStockInformation')) {
+    /**
+     * Fetch the live stock information
+     *
+     * @param int $productId
+     * @return array
+     */
+    function spGetProductStockInformation(int $productId): array
+    {
+        $connect = SitePackConnect::getInstance();
+        return $connect->fetchLiveStock();
+    }
+}

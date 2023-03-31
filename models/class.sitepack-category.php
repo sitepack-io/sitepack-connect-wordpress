@@ -75,6 +75,30 @@ class SitePackCategory implements \JsonSerializable
         );
     }
 
+    /**
+     * @return string
+     */
+    public function getCategoryMain(): string
+    {
+        return $this->categoryMain;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCategorySub(): string
+    {
+        return $this->categorySub;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCategorySubSub(): string
+    {
+        return $this->categorySubSub;
+    }
+
     public function jsonSerialize(): array
     {
         return \get_object_vars($this);

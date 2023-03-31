@@ -71,14 +71,14 @@ class SitePackWooCommerceService
         $product->set_manage_stock(true);
         $product->set_stock_quantity(0);
         $product->set_stock_status('outofstock');
-        if ($data['hasStock'] === true) {
+        if ((bool)$data['hasStock'] === true || (int)$data['inStock'] >= 1) {
             $product->set_stock_status('instock');
 
             if ($data['inStock'] === 0 && $data['stockSupplier'] >= 1) {
                 $product->set_stock_status('onbackorder');
             }
 
-            $product->set_stock_quantity($data['inStock'] + $data['stockSupplier']);
+            $product->set_stock_quantity((int)$data['inStock'] + (int)$data['stockSupplier']);
 
             if ($product->get_stock_quantity() < 1) {
                 $product->set_stock_quantity(1);
