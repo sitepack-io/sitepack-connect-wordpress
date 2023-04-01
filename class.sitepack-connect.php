@@ -3,7 +3,7 @@
 class SitePackConnect
 {
 
-    private static $instance;
+    private static ?SitePackConnect $instance = null;
 
     public static function getInstance(): SitePackConnect
     {

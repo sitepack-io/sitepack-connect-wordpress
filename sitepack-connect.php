@@ -59,6 +59,19 @@ if (!function_exists('spGetProductStockInformation')) {
     function spGetProductStockInformation(int $productId): array
     {
         $connect = SitePackConnect::getInstance();
-        return $connect->fetchLiveStock();
+
+        $product = new WC_Product_Simple($productId);
+        var_dump($product->read_meta_data());
+        exit;
+
+        return $connect->fetchLiveStock('w', 'ewf');
     }
 }
+
+add_action('init', 'fetchStock');
+
+function fetchstock()
+{
+//    spGetProductStockInformation(42);
+}
+
