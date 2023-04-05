@@ -98,12 +98,12 @@ class SitePackWooCommerceService
             $product->set_date_created((new DateTimeImmutable())->format('Y-m-d H:i:s'));
         }
 
-        $metaData = $metaData + [
-                'import_provider' => 'SITEPACK',
-                'import_source' => $data['importSource'],
-                'site' => $data['site'],
-                'ean' => $data['ean'],
-            ];
+        $metaData = array_merge($metaData, [
+            'import_provider' => 'SITEPACK',
+            'import_source' => $data['importSource'],
+            'site' => $data['site'],
+            'ean' => $data['ean'],
+        ]);
 
         $product->set_meta_data($metaData);
 

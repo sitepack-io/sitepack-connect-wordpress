@@ -56,15 +56,16 @@ if (!function_exists('spGetProductStockInformation')) {
      * @param int $productId
      * @return array
      */
-    function spGetProductStockInformation(int $productId): array
+    function spGetProductStockInformation(int $productId)
     {
         $connect = SitePackConnect::getInstance();
 
         $product = new WC_Product_Simple($productId);
-        var_dump($product->read_meta_data());
+        return;
+        var_dump($product->get_meta_data());
         exit;
 
-        return $connect->fetchLiveStock('w', 'ewf');
+        return $connect->fetchLiveStock('a', 'w', 'ewf');
     }
 }
 
@@ -72,6 +73,12 @@ add_action('init', 'fetchStock');
 
 function fetchstock()
 {
-//    spGetProductStockInformation(42);
+    if (is_admin()) {
+        return;
+    }
+
+    $ajaxStock = (bool)apply_filters('sitepack_fetch_live_stock', true);
+
+    spGetProductStockInformation(15);
 }
 

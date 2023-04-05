@@ -21,7 +21,7 @@ class SitePackStock implements \JsonSerializable
      * @param DateTimeImmutable|null $deliveryDate
      * @param string|null $errorReason
      */
-    private function __construct(
+    public function __construct(
         bool $hasStock,
         int $stockQuantity,
         int $stockQuantitySupplier,
