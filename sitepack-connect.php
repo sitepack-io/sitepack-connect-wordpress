@@ -54,7 +54,7 @@ if (!function_exists('spGetProductStockInformation')) {
      * Fetch the live stock information
      *
      * @param int $productId
-     * @return array
+     * @return ?SitePackStock
      */
     function spGetProductStockInformation(int $productId): ?SitePackStock
     {

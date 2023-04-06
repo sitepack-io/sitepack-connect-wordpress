@@ -2,7 +2,7 @@
 Contributors: sitepack
 Tags: connect, woocommerce, cyclesoftware, wilmar, sitepack
 Requires at least: 5.0
-Tested up to: 6.2.1
+Tested up to: 6.2
 Stable tag: 1.1.0
 License: GPLv2 or later
 
@@ -20,11 +20,11 @@ De belangrijkste functies zijn:
 
 * Categorie indeling aanpassen
 * Meerdere updates per dag
-* Bijna live voorraad informatie (maximaal 15 minuten oud)
 * Productafbeeldingen uitsluiten
 * Geen zware processen op je WordPress website
 * Premium ondersteuning via onze helpdesk
 * Vaste lage maandprijs, zonder verplichte opstartkosten
+* Voorraad per locatie (Vanaf het Grow abonnement)
 
 #### Categorie indeling aanpassen
 
@@ -110,16 +110,17 @@ If you want to contribute, please take a look at our [Github Repository](https:/
 
 = 1.1.0 =
 
-Release date: 2023-04-05
+Release date: 2023-04-06
 
 #### Enhancements
 
 * You can use the spGetProductStockInformation(int $productId) method to get the live stock information of a product and their related stock locations if the subscription is sufficient
 * Disable ajax stock information in the product page by using the filter "sitepack_fetch_live_stock" with value "false"
+* Stock locations added
 
 #### Bugfixes
 
-* Stock implementation call bugfix in REST API
+* Stock implementation call bugfixes in REST API
 
 = 1.0.2 =
 
