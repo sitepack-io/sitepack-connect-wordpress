@@ -2,8 +2,8 @@
 Contributors: sitepack
 Tags: connect, woocommerce, cyclesoftware, wilmar, sitepack
 Requires at least: 5.0
-Tested up to: 6.1.1
-Stable tag: 1.0.2
+Tested up to: 6.2
+Stable tag: 1.1.0
 License: GPLv2 or later
 
 De SitePack Connect plugin is ontworpen om je WordPress website te integreren met het kassasysteem, waardoor je de producten kunt synchroniseren en bestellingen kunt terugplaatsen naar het kassasysteem. Deze plugin werkt met kassasystemen zoals CycleSoftware en Wilmar.
@@ -20,11 +20,11 @@ De belangrijkste functies zijn:
 
 * Categorie indeling aanpassen
 * Meerdere updates per dag
-* Bijna live voorraad informatie (maximaal 15 minuten oud)
 * Productafbeeldingen uitsluiten
 * Geen zware processen op je WordPress website
 * Premium ondersteuning via onze helpdesk
 * Vaste lage maandprijs, zonder verplichte opstartkosten
+* Voorraad per locatie (Vanaf het Grow abonnement)
 
 #### Categorie indeling aanpassen
 
@@ -107,6 +107,20 @@ Wellicht kan onze [online helpdesk](https://help.sitepack.nl) je verder helpen. 
 If you want to contribute, please take a look at our [Github Repository](https://github.com/sitepack-io/sitepack-connect-wordpress).
 
 == Changelog ==
+
+= 1.1.0 =
+
+Release date: 2023-04-06
+
+#### Enhancements
+
+* You can use the spGetProductStockInformation(int $productId) method to get the live stock information of a product and their related stock locations if the subscription is sufficient
+* Disable ajax stock information in the product page by using the filter "sitepack_fetch_live_stock" with value "false"
+* Stock locations added
+
+#### Bugfixes
+
+* Stock implementation call bugfixes in REST API
 
 = 1.0.2 =
 
