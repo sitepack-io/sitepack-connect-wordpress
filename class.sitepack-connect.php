@@ -1,6 +1,7 @@
 <?php
 
 include SITEPACK_CONNECT_PLUGIN_DIR . '/models/class.sitepack-stock.php';
+include SITEPACK_CONNECT_PLUGIN_DIR . '/models/class.sitepack-stock-location.php';
 
 class SitePackConnect
 {
@@ -24,7 +25,8 @@ class SitePackConnect
 
     public function fetchLiveStock(string $siteUuid, string $importSource, string $ean): SitePackStock
     {
-        $url = 'https://api.sitepack.nl/%s/%s/%s';
+        $sitePackApiHost = apply_filters('sitepack_api_hostname', 'https://api.sitepack.nl');
+        $url = $sitePackApiHost . '/api/v2/products/%s/%s/%s/connect/stock';
         $url = sprintf(
             $url,
             $siteUuid,
@@ -35,7 +37,7 @@ class SitePackConnect
         $response = wp_remote_post($url);
 
         if (is_wp_error($response)) {
-            $error_message = $response->get_error_message();
+            $errorMessage = $response->get_error_message();
 
             return new SitePackStock(
                 false,
@@ -43,13 +45,45 @@ class SitePackConnect
                 0,
                 0,
                 false,
-                []
+                [],
+                null,
+                $errorMessage
             );
         }
 
-//        dump($response);
-//        exit;
 
+        if (empty($response['body'])) {
+            return new SitePackStock(
+                false,
+                0,
+                0,
+                0,
+                false,
+                [],
+                null,
+                'Empty body response'
+            );
+        }
+
+        $data = json_decode($response['body'], true);
+
+        $locations = [];
+        if (is_array($data['stock']['locations'])) {
+            foreach ($data['stock']['locations'] as $dataLocation) {
+                $locations[] = SitePackStockLocation::fromSitePackConnectData($dataLocation);
+            }
+        }
+
+        return new SitePackStock(
+            $data['stock']['inStock'],
+            $data['stock']['quantityAvailable'],
+            $data['stock']['quantitySupplier'],
+            0, // TODO in SP API
+            $data['stock']['allowBackorder'],
+            $locations,
+            ($data['stock']['deliveryDate'] !== null) ? new DateTimeImmutable($data['stock']['deliveryDate']) : null,
+            $data['stock']['errorReason'],
+        );
     }
 
 }

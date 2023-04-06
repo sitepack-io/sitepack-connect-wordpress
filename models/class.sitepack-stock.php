@@ -28,8 +28,8 @@ class SitePackStock implements \JsonSerializable
         int $stockQuantityReserved,
         bool $allowBackorder,
         array $stockLocations,
-        ?DateTimeImmutable $deliveryDate,
-        ?string $errorReason
+        ?DateTimeImmutable $deliveryDate = null,
+        ?string $errorReason = null
     ) {
         $this->hasStock = $hasStock;
         $this->stockQuantity = $stockQuantity;
@@ -64,17 +64,75 @@ class SitePackStock implements \JsonSerializable
         );
     }
 
+    /**
+     * @return bool
+     */
+    public function isHasStock(): bool
+    {
+        return $this->hasStock;
+    }
+
+    /**
+     * @return int
+     */
+    public function getStockQuantity(): int
+    {
+        return $this->stockQuantity;
+    }
+
+    /**
+     * @return int
+     */
+    public function getStockQuantitySupplier(): int
+    {
+        return $this->stockQuantitySupplier;
+    }
+
+    /**
+     * @return int
+     */
+    public function getStockQuantityReserved(): int
+    {
+        return $this->stockQuantityReserved;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isAllowBackorder(): bool
+    {
+        return $this->allowBackorder;
+    }
+
+    /**
+     * @return array
+     */
+    public function getStockLocations(): array
+    {
+        return $this->stockLocations;
+    }
+
+    /**
+     * @return DateTimeImmutable|null
+     */
+    public function getDeliveryDate(): ?DateTimeImmutable
+    {
+        return $this->deliveryDate;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getErrorReason(): ?string
+    {
+        return $this->errorReason;
+    }
+
+    /**
+     * @return array
+     */
     public function jsonSerialize(): array
     {
-        return [
-            'hasStock' => $this->hasStock,
-            'stockQuantity' => $this->stockQuantity,
-            'stockQuantitySupplier' => $this->stockQuantitySupplier,
-            'stockQuantityReserved' => $this->stockQuantityReserved,
-            'allowBackOrder' => $this->allowBackorder,
-            'stockLocations' => $this->stockLocations,
-            'deliveryDate' => $this->deliveryDate,
-            'errorReason' => $this->errorReason,
-        ];
+        return get_object_vars($this);
     }
 }

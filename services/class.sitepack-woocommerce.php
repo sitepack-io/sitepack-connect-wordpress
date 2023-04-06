@@ -71,13 +71,8 @@ class SitePackWooCommerceService
         $product->set_manage_stock(true);
         $product->set_stock_quantity(0);
         $product->set_stock_status('outofstock');
-        if ((bool)$data['hasStock'] === true || (int)$data['inStock'] >= 1) {
+        if ((bool)$data['hasStock'] === true || (int)$data['inStock'] >= 1 || (int)$data['stockSupplier'] >= 1) {
             $product->set_stock_status('instock');
-
-            if ($data['inStock'] === 0 && $data['stockSupplier'] >= 1) {
-                $product->set_stock_status('onbackorder');
-            }
-
             $product->set_stock_quantity((int)$data['inStock'] + (int)$data['stockSupplier']);
 
             if ($product->get_stock_quantity() < 1) {
@@ -91,21 +86,21 @@ class SitePackWooCommerceService
 
             if (is_array($json)) {
                 $metaData = $json;
+
+                foreach ($metaData as $key => $value) {
+                    $product->add_meta_data($key, $value);
+                }
             }
         }
+
+        $product->add_meta_data('import_provider', 'SITEPACK', true);
+        $product->add_meta_data('import_source', $data['importSource'], true);
+        $product->add_meta_data('site', $data['site'], true);
+        $product->add_meta_data('ean', $data['ean'], true);
 
         if ($product->get_date_created() === null) {
             $product->set_date_created((new DateTimeImmutable())->format('Y-m-d H:i:s'));
         }
-
-        $metaData = array_merge($metaData, [
-            'import_provider' => 'SITEPACK',
-            'import_source' => $data['importSource'],
-            'site' => $data['site'],
-            'ean' => $data['ean'],
-        ]);
-
-        $product->set_meta_data($metaData);
 
         return $product;
     }
@@ -153,7 +148,7 @@ class SitePackWooCommerceService
 
     public function findProduct($productId): WC_Product
     {
-        return new WC_Product_Simple($productId);
+        return wc_get_product($productId);
     }
 
     public function saveProductImage(WC_Product $product, WP_REST_Request $request): int

@@ -2,7 +2,7 @@
 Contributors: sitepack
 Tags: connect, woocommerce, cyclesoftware, wilmar, sitepack
 Requires at least: 5.0
-Tested up to: 6.1.1
+Tested up to: 6.2.1
 Stable tag: 1.1.0
 License: GPLv2 or later
 
@@ -110,11 +110,12 @@ If you want to contribute, please take a look at our [Github Repository](https:/
 
 = 1.1.0 =
 
-Release date: 2023-04-03
+Release date: 2023-04-05
 
 #### Enhancements
 
-* You can use the spGetProductStockInformation(int $productId) method to get the live stock information of a product and their related stock locations
+* You can use the spGetProductStockInformation(int $productId) method to get the live stock information of a product and their related stock locations if the subscription is sufficient
+* Disable ajax stock information in the product page by using the filter "sitepack_fetch_live_stock" with value "false"
 
 #### Bugfixes
 
