@@ -294,6 +294,26 @@ class SitePackConnectRestApi
         }
     }
 
+    public function renderArchiveProduct(WP_REST_Request $request)
+    {
+        try {
+            $this->authenticateRequest($request);
+            $this->validateRequiredFields($request, [
+                'id',
+            ]);
+
+            $product = $this->eCommerceService->findProduct($request['id']);
+
+            $product->delete(false);
+
+            return [
+                'status' => 'success',
+            ];
+        } catch (\Exception $exception) {
+            return $this->renderError($exception->getMessage());
+        }
+    }
+
     private function renderError(string $message)
     {
         if ($message === self::MESSAGE_UNAUTHORIZED) {

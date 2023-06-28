@@ -108,6 +108,18 @@ If you want to contribute, please take a look at our [Github Repository](https:/
 
 == Changelog ==
 
+= 1.2.0 =
+
+Release date: 2023-06-28
+
+#### Enhancements
+
+* Stock locations implemented on product page, display current quantity per store location
+
+#### Bugfixes
+
+* Archive call fixed in REST API, used when a product is no longer active in CycleSoftware
+
 = 1.1.0 =
 
 Release date: 2023-04-06

@@ -12,7 +12,6 @@ class SitePackConnect
     {
         if (!isset(self::$instance)) {
             self::$instance = new SitePackConnect();
-
             self::$instance->init();
         }
 

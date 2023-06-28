@@ -1,0 +1,55 @@
+button.sitepack-stock-button {
+    background: #f1f1f1;
+    color: #333;
+    border: none;
+    padding: 12px 15px;
+    cursor: pointer;
+    width: 100%;
+    font-size: 15px;
+}
+
+button.sitepack-stock-button:hover, button.sitepack-stock-button:active {
+    background: #ccc;
+}
+
+table.sitepack-stock-table {
+    width: 100%;
+    max-width: 600px;
+    border: 1px solid #f1f1f1;
+    display: none;
+}
+
+table.sitepack-stock-table tr td {
+    line-height: 25px;
+    padding: 6px 8px;
+    font-size: 14px;
+}
+
+table.sitepack-stock-table tr td.location-column {
+    font-weight: 700;
+}
+
+table.sitepack-stock-table tr td.stock-column {
+    text-align: right;
+}
+
+table.sitepack-stock-table tr td.stock-column span.stock-status-in-stock {
+    color: #7ad03a;
+}
+
+table.sitepack-stock-table tr td.stock-column span.stock-status-none {
+    color: #a44;
+}
+
+table.sitepack-stock-table tr:nth-child(even) {
+    background: #f1f1f1;
+}
+
+table.sitepack-stock-table tr:nth-child(odd) {
+    background: #ffffff;
+}
+
+table.sitepack-stock-table tr td i {
+    color: #575757;
+    font-size: 13px;
+}

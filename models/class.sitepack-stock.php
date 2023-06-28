@@ -52,6 +52,12 @@ class SitePackStock implements \JsonSerializable
     {
         $locations = [];
 
+        if (is_array($apiData['stock_locations'])) {
+            foreach ($apiData['stock_locations'] as $stockLocation) {
+                $locations[] = SitePackStockLocation::fromSitePackConnectData($stockLocation);
+            }
+        }
+
         return new SitePackStock(
             (bool)$apiData['inStock'],
             (int)$apiData['quantityAvailable'],
@@ -105,7 +111,7 @@ class SitePackStock implements \JsonSerializable
     }
 
     /**
-     * @return array
+     * @return SitePackStockLocation[]
      */
     public function getStockLocations(): array
     {
