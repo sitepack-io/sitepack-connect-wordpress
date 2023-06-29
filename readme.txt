@@ -3,7 +3,7 @@ Contributors: sitepack
 Tags: connect, woocommerce, cyclesoftware, wilmar, sitepack
 Requires at least: 5.0
 Tested up to: 6.2
-Stable tag: 1.1.0
+Stable tag: 1.2.1
 License: GPLv2 or later
 
 De SitePack Connect plugin is ontworpen om je WordPress website te integreren met het kassasysteem, waardoor je de producten kunt synchroniseren en bestellingen kunt terugplaatsen naar het kassasysteem. Deze plugin werkt met kassasystemen zoals CycleSoftware en Wilmar.
@@ -107,6 +107,18 @@ Wellicht kan onze [online helpdesk](https://help.sitepack.nl) je verder helpen. 
 If you want to contribute, please take a look at our [Github Repository](https://github.com/sitepack-io/sitepack-connect-wordpress).
 
 == Changelog ==
+
+= 1.2.1 =
+
+Release date: 2023-06-29
+
+#### Enhancements
+
+None
+
+#### Bugfixes
+
+* Include path fixed in the SitePack Connect service, a stock model caused a PHP warning
 
 = 1.2.0 =
 

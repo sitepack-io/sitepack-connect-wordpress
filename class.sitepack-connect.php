@@ -1,7 +1,7 @@
 <?php
 
-include SITEPACK_CONNECT_PLUGIN_DIR . '/models/class.sitepack-stock.php';
-include SITEPACK_CONNECT_PLUGIN_DIR . '/models/class.sitepack-stock-location.php';
+include SITEPACK_CONNECT_PLUGIN_DIR . 'models/class.sitepack-stock.php';
+include SITEPACK_CONNECT_PLUGIN_DIR . 'models/class.sitepack-stock-location.php';
 
 class SitePackConnect
 {
