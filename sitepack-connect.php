@@ -7,7 +7,7 @@
 Plugin Name: SitePack Connect
 Plugin URI: https://sitepack.nl/integraties
 Description: Connect your eCommerce store with external APIs, using SitePack Connect. Import products with stock information and export orders to your favorite third party software.
-Version: 1.2.2
+Version: 1.2.3
 Author: SitePack B.V.
 Author URI: https://sitepack.nl
 License: GPLv2 or later
@@ -22,7 +22,7 @@ if (!function_exists('add_action')) {
 
 define('SITEPACK_PLUGIN_BASENAME', plugin_basename(__FILE__));
 define('SITEPACK_PLUGIN_FILE', __FILE__);
-define('SITEPACK_CONNECT_VERSION', '1.2.2');
+define('SITEPACK_CONNECT_VERSION', '1.2.3');
 define('SITEPACK_CONNECT_PLUGIN_DIR', plugin_dir_path(__FILE__));
 
 require_once(SITEPACK_CONNECT_PLUGIN_DIR . 'class.sitepack-connect.php');
